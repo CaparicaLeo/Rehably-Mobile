@@ -127,7 +127,7 @@ class _ConsentScreenState extends State<ConsentScreen> {
                       onPressed: _rejecting ? null : _reject,
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.red,
-                        side: const BorderSide(color: AppColors.red.withOpacity(0.4)),
+                        side: BorderSide(color: AppColors.red.withOpacity(0.4)),
                       ),
                       child: const Text('NÃO ACEITAR E SAIR'),
                     ),
