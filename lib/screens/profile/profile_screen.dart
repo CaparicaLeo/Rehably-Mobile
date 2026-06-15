@@ -28,7 +28,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  user?.name?.[0].toUpperCase() ?? '?',
+                  (user?.name?.isNotEmpty == true ? user!.name![0].toUpperCase() : '?'),
                   style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: AppColors.teal),
                 ),
               ),
