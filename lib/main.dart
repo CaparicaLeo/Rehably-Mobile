@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'config/theme.dart';
 import 'providers/auth_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/home/home_screen.dart';
 import 'screens/auth/login_screen.dart';
 
 void main() {
@@ -24,13 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Reab_Ly',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1565C0),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
+      theme: appTheme,
       home: const AuthGate(),
     );
   }

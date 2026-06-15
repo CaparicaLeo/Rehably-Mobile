@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -44,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Reab_Ly')),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -53,16 +51,29 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.medical_services, size: 80, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(height: 32),
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.tealDim,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.teal.withOpacity(0.2)),
+                  ),
+                  child: const Icon(Icons.medical_services, size: 36, color: AppColors.teal),
+                ),
+                const SizedBox(height: 12),
+                const Text('Reab_Ly', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.text)),
+                const SizedBox(height: 4),
+                const Text('Plataforma de Telerreabilitação', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+                const SizedBox(height: 40),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
-                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email, size: 20),
                   ),
                   keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: AppColors.text),
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Informe o email';
                     if (!v.contains('@')) return 'Email inválido';
@@ -74,39 +85,36 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Senha',
-                    prefixIcon: const Icon(Icons.lock),
-                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.lock, size: 20),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                      icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off, size: 20),
                       onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                     ),
                   ),
                   obscureText: _obscurePassword,
+                  style: const TextStyle(color: AppColors.text),
                   validator: (v) => v == null || v.isEmpty ? 'Informe a senha' : null,
                 ),
                 const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())),
+                    onPressed: () {
+                      // Forgot password navigation — no screen yet
+                    },
                     child: const Text('Esqueceu a senha?'),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
                   height: 48,
                   child: ElevatedButton(
                     onPressed: auth.isLoading ? null : _login,
                     child: auth.isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Entrar', style: TextStyle(fontSize: 16)),
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.bg))
+                        : const Text('Entrar'),
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
-                  child: const Text('Não tem conta? Cadastre-se'),
                 ),
               ],
             ),

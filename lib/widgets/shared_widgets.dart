@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config/theme.dart';
 
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({super.key});
@@ -6,39 +7,52 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) => const Center(child: CircularProgressIndicator());
 }
 
-class ErrorWidget extends StatelessWidget {
+class AppEmpty extends StatelessWidget {
   final String message;
-  const ErrorWidget({super.key, required this.message});
-  @override
-  Widget build(BuildContext context) => Center(child: Text(message));
-}
-
-class EmptyWidget extends StatelessWidget {
-  final String message;
-  const EmptyWidget({super.key, required this.message});
-  @override
-  Widget build(BuildContext context) => Center(child: Text(message));
-}
-
-class SectionCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const SectionCard({super.key, required this.title, required this.children});
+  final IconData icon;
+  const AppEmpty({super.key, required this.message, this.icon = Icons.info_outline});
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const Divider(),
-            ...children,
-          ],
-        ),
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 40, color: AppColors.textMuted),
+          const SizedBox(height: 12),
+          Text(message, style: const TextStyle(color: AppColors.textMuted, fontSize: 14)),
+        ],
       ),
+    );
+  }
+}
+
+class AppCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  const AppCard({super.key, required this.child, this.padding});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: padding ?? const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: child,
+    );
+  }
+}
+
+class SectionHeader extends StatelessWidget {
+  final String title;
+  const SectionHeader({super.key, required this.title});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
     );
   }
 }
