@@ -4,6 +4,7 @@ import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/consent/consent_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +56,12 @@ class _AuthGateState extends State<AuthGate> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    return auth.isAuthenticated ? const HomeScreen() : const LoginScreen();
+    if (auth.isAuthenticated) {
+      if (auth.isPatient && !auth.hasConsent) {
+        return const ConsentScreen();
+      }
+      return const HomeScreen();
+    }
+    return const LoginScreen();
   }
 }

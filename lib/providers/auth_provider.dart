@@ -16,6 +16,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _user != null;
   bool get isDoctor => _user?.role == 'doctor';
   bool get isPatient => _user?.role == 'patient';
+  bool get hasConsent => _user?.patient?.consentimentoLgpd == true;
   String? get error => _error;
 
   Future<void> loadUser() async {
@@ -80,6 +81,31 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  Future<bool> acceptConsent() async {
+    try {
+      await _apiService.post('/consent');
+      final data = await _authService.getUser();
+      _user = User.fromJson(data);
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      return false;
+    } catch (e) {
+      _error = 'Erro de conexão.';
+      return false;
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _apiService.delete('/my/account');
+    } catch (_) {}
+    await _apiService.setToken(null);
+    _user = null;
+    notifyListeners();
   }
 
   Future<void> logout() async {

@@ -95,6 +95,8 @@ class PatientProfile {
   final String? doctorId;
   final String birthDate;
   final String? clinicalCondition;
+  final bool consentimentoLgpd;
+  final String? consentimentoEm;
 
   PatientProfile({
     required this.id,
@@ -102,6 +104,8 @@ class PatientProfile {
     this.doctorId,
     required this.birthDate,
     this.clinicalCondition,
+    this.consentimentoLgpd = false,
+    this.consentimentoEm,
   });
 
   factory PatientProfile.fromJson(Map<String, dynamic> json) {
@@ -111,6 +115,8 @@ class PatientProfile {
       doctorId: json['doctor_id'] as String?,
       birthDate: json['birth_date'] as String,
       clinicalCondition: json['clinical_condition'] as String?,
+      consentimentoLgpd: json['consentimento_lgpd'] as bool? ?? false,
+      consentimentoEm: json['consentimento_em'] as String?,
     );
   }
 
@@ -120,5 +126,7 @@ class PatientProfile {
         'doctor_id': doctorId,
         'birth_date': birthDate,
         'clinical_condition': clinicalCondition,
+        'consentimento_lgpd': consentimentoLgpd,
+        'consentimento_em': consentimentoEm,
       };
 }
