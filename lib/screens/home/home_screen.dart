@@ -7,8 +7,20 @@ import '../diary/diary_form_screen.dart';
 import '../diary/diary_list_screen.dart';
 import '../profile/profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _sessionRefreshKey = 0;
+
+  Future<void> _navigateAndRefresh(BuildContext context, Widget page) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    setState(() => _sessionRefreshKey++);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +35,17 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.history_rounded),
             tooltip: 'Histórico',
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DiaryListScreenPage())),
+            onPressed: () => _navigateAndRefresh(context, const DiaryListScreenPage()),
           ),
           IconButton(
             icon: const Icon(Icons.person_rounded),
             tooltip: 'Perfil',
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())),
+            onPressed: () => _navigateAndRefresh(context, const ProfileScreen()),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async => setState(() => _sessionRefreshKey++),
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -41,16 +53,16 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _TodayCta(patientId: patient?.id),
             const SizedBox(height: 16),
-            _QuickStats(patientId: patient?.id),
+            _QuickStats(key: ValueKey('stats_$_sessionRefreshKey'), patientId: patient?.id),
             const SizedBox(height: 20),
             const Text('Últimas sessões', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.text)),
             const SizedBox(height: 8),
-            _RecentSessions(patientId: patient?.id),
+            _RecentSessions(key: ValueKey('sessions_$_sessionRefreshKey'), patientId: patient?.id),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DiaryFormScreen())),
+        onPressed: () => _navigateAndRefresh(context, const DiaryFormScreen()),
         backgroundColor: AppColors.teal,
         foregroundColor: AppColors.bg,
         icon: const Icon(Icons.add),
