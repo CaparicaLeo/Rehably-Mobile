@@ -5,6 +5,7 @@ import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../diary/diary_form_screen.dart';
 import '../diary/diary_list_screen.dart';
+import '../exercise/exercise_detail_screen.dart';
 import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -288,31 +289,50 @@ class _RecentSessionsState extends State<_RecentSessions> {
         final pain = s['pain_level'] as int?;
         final completed = s['completed'] as bool? ?? false;
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 6),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text)),
-                    const SizedBox(height: 2),
-                    Text(date, style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
-                  ],
+        return GestureDetector(
+          onTap: () {
+            final exercise = item?['exercise'] as Map<String, dynamic>?;
+            if (exercise != null) {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => ExerciseDetailScreen(
+                  title: exercise['title'] as String? ?? 'Exercício',
+                  description: exercise['description'] as String?,
+                  category: exercise['category'] as String?,
+                  videoUrl: exercise['video_url'] as String?,
+                  sets: item!['sets'] as int?,
+                  repetitions: item['repetitions'] as int?,
+                  durationSeconds: item['duration_seconds'] as int?,
+                  frequencyText: item['frequency_text'] as String?,
                 ),
-              ),
-              if (completed && pain != null)
-                _LevelBadge(value: pain, color: pain <= 2 ? AppColors.green : (pain <= 3 ? AppColors.amber : AppColors.red), label: 'Dor'),
-              if (!completed)
-                const _LevelBadge(value: 0, color: AppColors.textMuted, label: 'Pendente'),
-            ],
+              ));
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 6),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text)),
+                      const SizedBox(height: 2),
+                      Text(date, style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                    ],
+                  ),
+                ),
+                if (completed && pain != null)
+                  _LevelBadge(value: pain, color: pain <= 2 ? AppColors.green : (pain <= 3 ? AppColors.amber : AppColors.red), label: 'Dor'),
+                if (!completed)
+                  const _LevelBadge(value: 0, color: AppColors.textMuted, label: 'Pendente'),
+              ],
+            ),
           ),
         );
       }).toList(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../config/theme.dart';
 import '../../services/api_service.dart';
+import '../exercise/exercise_detail_screen.dart';
 
 class DiaryFormScreen extends StatefulWidget {
   const DiaryFormScreen({super.key});
@@ -20,6 +21,14 @@ class _DiaryFormScreenState extends State<DiaryFormScreen> {
   int _difficulty = 1;
   bool _loading = true;
   bool _submitting = false;
+
+  Map<String, dynamic>? get _selectedItem {
+    if (_selectedItemId == null) return null;
+    for (final item in _items) {
+      if (item['id'] == _selectedItemId) return item;
+    }
+    return null;
+  }
 
   @override
   void initState() {
@@ -98,21 +107,55 @@ class _DiaryFormScreenState extends State<DiaryFormScreen> {
                   children: [
                     const Text('Exercício realizado', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text)),
                     const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: _selectedItemId,
-                      items: _items.map((item) {
-                        final exercise = item['exercise'] as Map?;
-                        final title = exercise?['title'] as String? ?? 'Exercício';
-                        return DropdownMenuItem<String>(
-                          value: item['id'] as String?,
-                          child: Text(title, style: const TextStyle(color: AppColors.text)),
-                        );
-                      }).toList(),
-                      onChanged: (v) => setState(() => _selectedItemId = v),
-                      decoration: const InputDecoration(hintText: 'Selecione um exercício'),
-                      style: const TextStyle(color: AppColors.text),
-                      dropdownColor: AppColors.surface2,
-                      validator: (v) => v == null ? 'Selecione um exercício' : null,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: _selectedItemId,
+                            items: _items.map((item) {
+                              final exercise = item['exercise'] as Map?;
+                              final title = exercise?['title'] as String? ?? 'Exercício';
+                              return DropdownMenuItem<String>(
+                                value: item['id'] as String?,
+                                child: Text(title, style: const TextStyle(color: AppColors.text)),
+                              );
+                            }).toList(),
+                            onChanged: (v) => setState(() => _selectedItemId = v),
+                            decoration: const InputDecoration(hintText: 'Selecione um exercício'),
+                            style: const TextStyle(color: AppColors.text),
+                            dropdownColor: AppColors.surface2,
+                            validator: (v) => v == null ? 'Selecione um exercício' : null,
+                          ),
+                        ),
+                        if (_selectedItem != null) ...[
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            height: 48,
+                            child: IconButton(
+                              onPressed: () {
+                                final item = _selectedItem!;
+                                final exercise = item['exercise'] as Map<String, dynamic>?;
+                                if (exercise == null) return;
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (_) => ExerciseDetailScreen(
+                                    title: exercise['title'] as String? ?? 'Exercício',
+                                    description: exercise['description'] as String?,
+                                    category: exercise['category'] as String?,
+                                    videoUrl: exercise['video_url'] as String?,
+                                    sets: item['sets'] as int?,
+                                    repetitions: item['repetitions'] as int?,
+                                    durationSeconds: item['duration_seconds'] as int?,
+                                    frequencyText: item['frequency_text'] as String?,
+                                  ),
+                                ));
+                              },
+                              icon: const Icon(Icons.info_outline, color: AppColors.teal),
+                              tooltip: 'Ver detalhes do exercício',
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     if (_items.isEmpty)
                       Padding(
